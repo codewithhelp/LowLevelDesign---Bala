@@ -663,9 +663,270 @@ class Client {
 # Observer : Pub/Sub pattern, it is for one-to-many relationship b/w objects. If one object is modified, all the dependent objects get notified automatically. 
 Advantage: Loose coupling
 
+class Client {
+	public static void main(String[] args) {
+
+		MessageSubOne sub1 = new MessageSubOne();
+		MessageSubTwo sub2 = new MessageSubTwo();
+		MessageSubThree sub3 = new MessageSubThree();
+
+		MessagePublisher pub = new MessagePublisher();
+
+		pub.attach(sub1);
+		pub.attach(sub2);
+
+		pub.notifyUpdate(new Message("Message 1"));
+
+		pub.detach(sub2);
+		pub.attach(sub3);
+
+		pub.notifyUpdate(new Message("Message 2"));
+	}
+
+	interface Subject {
+		void attach(Observer o);
+
+		void detach(Observer o);
+
+		void notifyUpdate(Message m);
+	}
+
+	interface Observer {
+		public void update(Message m);
+	}
+
+	static class Message {
+		String message;
+
+		public Message(String message) {
+			this.message = message;
+		}
+
+		public String getMessage() {
+			return this.message;
+		}
+	}
+
+	static class MessagePublisher implements Subject {
+
+		private List<Observer> observers = new ArrayList<Observer>();
+
+		@Override
+		public void attach(Observer o) {
+			observers.add(o);
+		}
+
+		@Override
+		public void detach(Observer o) {
+			observers.remove(o);
+		}
+
+		@Override
+		public void notifyUpdate(Message m) {
+			for (Observer o : observers)
+				o.update(m);
+		}
+
+	}
+
+	static class MessageSubOne implements Observer {
+
+		@Override
+		public void update(Message m) {
+			System.out.println("Message subscriber one : " + m.getMessage());
+		}
+
+	}
+
+	static class MessageSubTwo implements Observer {
+
+		@Override
+		public void update(Message m) {
+			System.out.println("Message subscriber two : " + m.getMessage());
+		}
+
+	}
+
+	static class MessageSubThree implements Observer {
+
+		@Override
+		public void update(Message m) {
+			System.out.println("Message subscriber three : " + m.getMessage());
+		}
+
+	}
+}
+
+
 # Strategy : class behaviour or it's algorithm can be changed at runtime
 Example: java.util.comparator, has compare() to order the elements
 Advantages: Based on Open/Close principle. Allow clinet to choose any algorithms from set of defined related algorithms.
 
+class Client {
+	public static void main(String[] args) {
+		// Creating social Media Connect Object for connecting with friend by
+		// any social media strategy.
+		SocialMediaContext context = new SocialMediaContext();
+
+		// Setting Facebook strategy.
+		context.setSocialmediaStrategy(new FacebookStrategy());
+		context.connect("Bala");
+
+		System.out.println("====================");
+
+		// Setting Twitter strategy.
+		context.setSocialmediaStrategy(new GooglePlusStrategy());
+		context.connect("Bala");
+
+		System.out.println("====================");
+	}
+
+	interface ISocialMediaStrategy {
+		public void connectTo(String friendName);
+	}
+
+	static class SocialMediaContext {
+		ISocialMediaStrategy smStrategy;
+
+		public void setSocialmediaStrategy(ISocialMediaStrategy smStrategy) {
+			this.smStrategy = smStrategy;
+		}
+
+		public void connect(String name) {
+			smStrategy.connectTo(name);
+		}
+	}
+
+	static class FacebookStrategy implements ISocialMediaStrategy {
+
+		public void connectTo(String friendName) {
+			System.out.println("Connecting with " + friendName + " through Facebook");
+		}
+	}
+
+	static class GooglePlusStrategy implements ISocialMediaStrategy {
+
+		public void connectTo(String friendName) {
+			System.out.println("Connecting with " + friendName + " through GooglePlus");
+		}
+	}
+}
+
 # Template Method :  Defining the skeleton of an algorithm, which shall not be overriden
 Examples: java.util.AbstractList/java.util.AbstractSet/java.util.AbstractMap
+
+class Client {
+	public static void main(String[] args) {
+		System.out.println("Going to build Concrete Wall House");
+
+		House house = new ConcreteWallHouse();
+		house.buildhouse();
+
+		System.out.println("Concrete Wall House constructed successfully");
+
+		System.out.println("********************");
+
+		System.out.println("Going to build Glass Wall House");
+
+		house = new GlassWallHouse();
+		house.buildhouse();
+
+		System.out.println("Glass Wall House constructed successfully");
+	}
+
+	static abstract class House {
+		/**
+		 * This is the template method we are discussing. This method should be final so
+		 * that other class can't re-implement and change the order of the steps.
+		 */
+		public final void buildhouse() {
+			constructBase();
+			constructRoof();
+			constructWalls();
+			constructWindows();
+			constructDoors();
+			paintHouse();
+			decorateHouse();
+		}
+
+		public abstract void decorateHouse();
+
+		public abstract void paintHouse();
+
+		public abstract void constructDoors();
+
+		public abstract void constructWindows();
+
+		public abstract void constructWalls();
+
+		/**
+		 * final implementation of constructing roof - final as all type of house Should
+		 * build roof in same manner.
+		 */
+		private final void constructRoof() {
+			System.out.println("Roof has been constructed.");
+		}
+
+		/**
+		 * final implementation of constructing base - final as all type of house Should
+		 * build base/foundation in same manner.
+		 */
+		private final void constructBase() {
+			System.out.println("Base has been constructed.");
+		}
+	}
+
+	static class ConcreteWallHouse extends House {
+		@Override
+		public void decorateHouse() {
+			System.out.println("Decorating Concrete Wall House");
+		}
+
+		@Override
+		public void paintHouse() {
+			System.out.println("Painting Concrete Wall House");
+		}
+
+		@Override
+		public void constructDoors() {
+			System.out.println("Constructing Doors for Concrete Wall House");
+		}
+
+		@Override
+		public void constructWindows() {
+			System.out.println("Constructing Windows for Concrete Wall House");
+		}
+
+		@Override
+		public void constructWalls() {
+			System.out.println("Constructing Concrete Wall for my House");
+		}
+	}
+
+	static class GlassWallHouse extends House {
+		@Override
+		public void decorateHouse() {
+			System.out.println("Decorating Glass Wall House");
+		}
+
+		@Override
+		public void paintHouse() {
+			System.out.println("Painting Glass Wall House");
+		}
+
+		@Override
+		public void constructDoors() {
+			System.out.println("Constructing Doors for Glass Wall House");
+		}
+
+		@Override
+		public void constructWindows() {
+			System.out.println("Constructing Windows for Glass Wall House");
+		}
+
+		@Override
+		public void constructWalls() {
+			System.out.println("Constructing Glass Wall for my House");
+		}
+	}
+}
