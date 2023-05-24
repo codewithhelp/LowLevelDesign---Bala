@@ -206,14 +206,72 @@ Reusable solutions to commonly occuring problems in software design.
 
 # Singleton : Restricts to create one and only one object
 
-Example: java.lang.Runtime
+Example: java.lang.Runtime in java, Examples like DB Connection
+
+class Singleton{
+
+    // private methods
+
+    private Singleton(){
+        sysout("singleton init..")
+    }
+
+    private static class Lazy {
+        private static final Single INSTANCE = new Single();
+    }
+    
+    // public methods
+
+    public static Single getInstance() {
+		return Lazy.INSTANCE;
+	}
+
+}
+
 
 # Builder : Construct/Create complext objects
 
-Example: java.lang.StringBuilder
+Usecase1: complex object with lots of optional parameters.
+Usecase2: complex object with step by step approach.
 
 Advantage: Reduce number of constructors, understanable and maintainable
 Disadvantages: Code increases to maintain builder code
+
+Example: java.lang.StringBuilder
+
+
+class Phone{
+    String name, os;
+
+    Phone(String name, String os){
+        this.name = name;
+        this.os = os;
+    }
+}
+
+class PhoneBuilder{
+    String name, os;
+
+    PhoneBuilder setName(String name){
+        this.name = name;
+        return this;
+    }
+
+    PhoneBuilder setOS(String os){
+        this.os = os;
+        return this;
+    }
+
+    Phone buildPhone(){
+        return new Phone(name, os);
+    }
+}
+
+class Client{
+    psv main(){
+        Phone phone = new PhoneBuilder().setName("Nokia").setOS("Symbion").buildPhone();
+    }
+}
 
 
 # Factory : Creates object without exposing the logic, and referes the newly created objects using common interface
@@ -222,6 +280,64 @@ Example: getInstance() in java.util.calender
 
 Advantage: Loose coupling & Hide implementation logic
 Disadvantages: It creates too many sub clasees with minor differences
+
+Usecase1: Creating Objects Based on Runtime Conditions
+
+class CarFactory {
+	public static Car buidCar(CarType type) {
+		switch (type) {
+            case SEDEN:
+                return new SedenCar();
+            case HATCHBACK:
+                return new HatchbackCar();
+        }
+        return null;
+	}
+}
+
+public static enum CarType {
+	SEDEN, HATCHBACK
+}
+
+public static abstract class Car {
+    private CarType type = null;
+	Car(CarType type) {
+		this.type = type;
+    }
+
+	public void setType(CarType type) {
+		this.type = type;
+	}
+
+	public CarType getType() {
+		return this.type;
+	}
+
+	protected abstract void construct();
+}
+
+public static class SedenCar extends Car {
+
+	SedenCar() {
+		super(CarType.SEDEN);
+	}
+
+	@Override
+	protected void construct() {
+		System.out.println("Constructed SEDEN");
+	}
+}
+
+public static class HatchbackCar extends Car {
+	public HatchbackCar() {
+		super(CarType.HATCHBACK);
+	}
+
+	@Override
+    protected void construct() {
+		System.out.println("Constructed HATCHBACK");
+	}
+}
 
 
 * Abstract Factory : Super factory, which creates other factories. Facroty of Factories, Car Factory at multion regions | Useful at Frameworks
@@ -232,13 +348,311 @@ Disadvantages: It creates too many sub clasees with minor differences
 
 # Adapter :  Bridge b/w two incompatible interfaces
 
+class Client {
+
+	public static void main(String[] args) {
+
+		Bird sparrow = new Sparrow();
+		ToyDuck toyDuck = new PlasticToyDuck();
+
+		ToyDuck birdAdapter = new BirdAdapter(sparrow);
+
+		System.out.println("Sparrow");
+		sparrow.fly();
+		sparrow.makeSound();
+
+		System.out.println("Toyduck");
+		toyDuck.squeak();
+
+		// bird behaves like toyduck
+		System.out.println("bird adapter");
+		birdAdapter.squeak();
+	}
+
+
+	interface Bird {
+		public void fly();
+		public void makeSound();
+	}
+
+	static class Sparrow implements Bird {
+		@Override
+		public void fly() {
+			System.out.println("Flying");
+		}
+		@Override
+		public void makeSound() {
+			System.out.println("Chirp Chirp");
+		}
+	}
+
+	interface ToyDuck { // it'll not fly, it'll make squeak sound
+		public void squeak();
+	}
+
+	static class PlasticToyDuck implements ToyDuck {
+		@Override
+		public void squeak() {
+			System.out.println("Squeak");
+		}
+	}
+
+    // adapter
+	static class BirdAdapter implements ToyDuck {
+		Bird bird;
+		public BirdAdapter(Bird bird) {
+			this.bird = bird;
+		}
+		@Override
+		public void squeak() {
+			bird.makeSound();
+		}
+	}
+
+}
+
 # Bridge : Seperates the abstraction from its implementaion, so that the two can vary independently
+
+class Client{
+    public static void main(String[] args) {
+
+		Shape rectangle = new Rectangle(new Red());
+		rectangle.colorIt();
+
+		Shape circle = new Circle(new Blue());
+		circle.colorIt();
+
+	}
+}
+
+abstract static class Shape {
+	protected Color color;
+	abstract public void colorIt();
+}
+
+static class Rectangle extends Shape {
+	public Rectangle(Color color) {
+        this.color = color;
+	}
+	@Override
+	public void colorIt() {
+		color.color();
+		System.out.println(" rectangle");
+    }
+}
+
+static class Circle extends Shape {
+	public Circle(Color color) {
+		this.color = color;
+	}
+	@Override
+	public void colorIt() {
+		color.color();
+		System.out.println(" circle");
+	}
+}
+
+interface Color {
+	abstract public void color();
+}
+
+static class Blue implements Color {
+	@Override
+	public void color() {
+		System.out.print("Blue color");
+	}
+}
+
+static class Red implements Color {
+	@Override
+	public void color() {
+		System.out.print("Red color");
+	}
+}
+
 
 # Decorator : Adding new functionality to the existing object, without altering its strcture
 
+class Client {
+	public static void main(String[] args) {
+
+		Pizza pizza = new SimplePizza();
+		System.out.println(pizza.getDescription());
+		System.out.println(pizza.getCost());
+
+		Pizza pannerPizza = new Paneer(pizza);
+		System.out.println(pannerPizza.getDescription());
+		System.out.println(pannerPizza.getCost());
+
+	}
+
+	static abstract class Pizza {
+		String desc = "Unknown";
+
+		abstract int getCost();
+
+		public String getDescription() {
+			return desc;
+		}
+	}
+
+	static abstract class ToppingsDecorator extends Pizza {
+		abstract public String getDescription();
+	}
+
+	static class SimplePizza extends Pizza {
+		SimplePizza() {
+			this.desc = "SimplePizza";
+		}
+
+		@Override
+		int getCost() {
+			return 10;
+		}
+	}
+
+	static class Paneer extends ToppingsDecorator {
+		Pizza pizza;
+
+		Paneer(Pizza pizza) {
+			this.pizza = pizza;
+		}
+
+		@Override
+		public String getDescription() {
+			return this.pizza.getDescription() + " decorated with paneer";
+		}
+
+		@Override
+		int getCost() {
+			return 25 + this.pizza.getCost();
+		}
+
+	}
+}
+
 # Composite : Compose objects in to tree strcture to represent part-whoe hierachies
+Example: directory contains directories or files, file is a leaf node, directory is a composite
+
+class Client {
+	public static void main(String[] args) {
+
+		Developer dev1 = new Developer("Bala", "Senior");
+		Developer dev2 = new Developer("Satish", "Senior 2");
+		CompanyDirectory devDirectory = new CompanyDirectory();
+		devDirectory.addEmployee(dev1);
+		devDirectory.addEmployee(dev2);
+
+		Manager man1 = new Manager("Bala", "Senior");
+		Manager man2 = new Manager("Satish", "Senior 2");
+		CompanyDirectory manDirectory = new CompanyDirectory();
+		manDirectory.addEmployee(man1);
+		manDirectory.addEmployee(man2);
+
+		CompanyDirectory root = new CompanyDirectory();
+		root.addEmployee(devDirectory);
+		root.addEmployee(manDirectory);
+
+		root.showEmployeeDetails();
+	}
+
+	static interface Employee {
+		public void showEmployeeDetails();
+	}
+
+	// leaf
+	static class Developer implements Employee {
+		String name, position;
+
+		public Developer(String name, String position) {
+			this.name = name;
+			this.position = position;
+		}
+
+		@Override
+		public void showEmployeeDetails() {
+			System.out.println("Developer Name: " + name + ", Position: " + position);
+		}
+	}
+
+	// leaf
+	static class Manager implements Employee {
+		String name, position;
+
+		public Manager(String name, String position) {
+			this.name = name;
+			this.position = position;
+		}
+
+		@Override
+		public void showEmployeeDetails() {
+			System.out.println("Manager Name: " + name + ", Position: " + position);
+		}
+	}
+
+	// non-leaf/composite node
+	static class CompanyDirectory implements Employee {
+
+		List<Employee> employees = new ArrayList<Employee>();
+
+		@Override
+		public void showEmployeeDetails() {
+			for (Employee employee : employees)
+				employee.showEmployeeDetails();
+		}
+
+		public void addEmployee(Employee emp) {
+			employees.add(emp);
+		}
+
+		public void removeEmployee(Employee emp) {
+			employees.remove(emp);
+		}
+	}
+}
+ 
 
 # Facede : Noting but face of a building, means provides simple interface to client instead of complex sub system. It hides complexity, not reduce complexity.
+
+class Client {
+	public static void main(String[] args) {
+
+		HotelKeeperFacade hotelKeeper = new HotelKeeperFacade();
+		hotelKeeper.getNonVegMenu();
+		hotelKeeper.getVegMenu();
+
+	}
+
+	interface Hotel {
+		public void getMenus();
+	}
+
+	static class VegRest implements Hotel {
+		@Override
+		public void getMenus() {
+			System.out.println("Veg Rest");
+		}
+	}
+
+	static class NonVegRest implements Hotel {
+		@Override
+		public void getMenus() {
+			System.out.println("NonVeg Rest");
+		}
+	}
+
+	static class HotelKeeperFacade {
+		public void getVegMenu() {
+			VegRest vegRest = new VegRest();
+			vegRest.getMenus();
+		}
+
+		public void getNonVegMenu() {
+			NonVegRest nonVegRest = new NonVegRest();
+			nonVegRest.getMenus();
+		}
+	}
+}
 
 * Fly weight: Reuses existing objects by storing them,  creates new object only when no matching object found
 * Proxy pattern: Class represents substitue functionality of another class.
