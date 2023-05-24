@@ -11,7 +11,7 @@ Solid Principles:
 
 1. Single Responsibility
 
-Each funciton/class/module sould have a single, well defined responsibility.
+Each funciton/class/module should have a single, well defined responsibility.
 There should be only one reason to change the code
 
 
@@ -193,3 +193,64 @@ class Macbook{
 
     }
 }
+
+
+
+
+### Design Patterns
+
+Reusable solutions to commonly occuring problems in software design.
+
+
+## Creational : Deals with object creation
+
+# Singleton : Restricts to create one and only one object
+
+Example: java.lang.Runtime
+
+# Builder : Construct/Create complext objects
+
+Example: java.lang.StringBuilder
+
+Advantage: Reduce number of constructors, understanable and maintainable
+Disadvantages: Code increases to maintain builder code
+
+
+# Factory : Creates object without exposing the logic, and referes the newly created objects using common interface
+
+Example: getInstance() in java.util.calender
+
+Advantage: Loose coupling & Hide implementation logic
+Disadvantages: It creates too many sub clasees with minor differences
+
+
+# * Abstract Factory : Super factory, which creates other factories. Facroty of Factories
+
+Car Factory at multion regions
+
+Useful at Frameworks
+
+
+# * Prototype : Creates new object, by copying existing object | Difficult to implement, Clone method in java
+
+
+## Structural
+
+# Adapter
+
+# Bridge
+
+# Decorator
+
+# Composite
+
+# Facede
+
+
+## Behavioral
+
+# Strategy
+
+# Observer
+
+# Template Method
