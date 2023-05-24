@@ -224,33 +224,34 @@ Advantage: Loose coupling & Hide implementation logic
 Disadvantages: It creates too many sub clasees with minor differences
 
 
-# * Abstract Factory : Super factory, which creates other factories. Facroty of Factories
-
-Car Factory at multion regions
-
-Useful at Frameworks
+* Abstract Factory : Super factory, which creates other factories. Facroty of Factories, Car Factory at multion regions | Useful at Frameworks
+* Prototype : Creates new object, by copying existing object | Difficult to implement, Clone method in java
 
 
-# * Prototype : Creates new object, by copying existing object | Difficult to implement, Clone method in java
+## Structural : deals with relationship between object
+
+# Adapter :  Bridge b/w two incompatible interfaces
+
+# Bridge : Seperates the abstraction from its implementaion, so that the two can vary independently
+
+# Decorator : Adding new functionality to the existing object, without altering its strcture
+
+# Composite : Compose objects in to tree strcture to represent part-whoe hierachies
+
+# Facede : Noting but face of a building, means provides simple interface to client instead of complex sub system. It hides complexity, not reduce complexity.
+
+* Fly weight: Reuses existing objects by storing them,  creates new object only when no matching object found
+* Proxy pattern: Class represents substitue functionality of another class.
 
 
-## Structural
+## Behavioral : deals with communication between objects
 
-# Adapter
+# Observer : Pub/Sub pattern, it is for one-to-many relationship b/w objects. If one object is modified, all the dependent objects get notified automatically. 
+Advantage: Loose coupling
 
-# Bridge
+# Strategy : class behaviour or it's algorithm can be changed at runtime
+Example: java.util.comparator, has compare() to order the elements
+Advantages: Based on Open/Close principle. Allow clinet to choose any algorithms from set of defined related algorithms.
 
-# Decorator
-
-# Composite
-
-# Facede
-
-
-## Behavioral
-
-# Strategy
-
-# Observer
-
-# Template Method
+# Template Method :  Defining the skeleton of an algorithm, which shall not be overriden
+Examples: java.util.AbstractList/java.util.AbstractSet/java.util.AbstractMap
