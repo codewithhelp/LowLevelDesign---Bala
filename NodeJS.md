@@ -116,3 +116,6 @@ new Rat().walk()
 
 
 new BirdAdapter(new Bird()).walk(); // with the bird adaptor i am able to make walk call on bird.
+
+
+# Bridge : Seperates the abstraction from its implementaion, so that the two can vary independently
