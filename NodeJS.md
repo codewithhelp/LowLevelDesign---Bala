@@ -79,3 +79,40 @@ class PhoneFactory{
 
 PhoneFactory.createPhone('iPhone').printName();
 PhoneFactory.createPhone('Nokia').printName();
+
+
+
+# Adapter :  Bridge b/w two incompatible interfaces
+
+Bird - Fly
+Rat - Walk
+
+
+class Bird{
+    fly(){
+        console.log('I Fly')
+    }
+}
+
+class Rat{
+    walk(){
+        console.log('I Walk')
+    }
+}
+
+class BirdAdapter extends Rat{
+    constructor(bird){
+      super()
+      this.bird = bird
+    }
+    walk(){
+        this.bird.fly()
+    }
+}
+
+
+new Bird().fly()
+new Rat().walk()
+
+
+new BirdAdapter(new Bird()).walk(); // with the bird adaptor i am able to make walk call on bird.
