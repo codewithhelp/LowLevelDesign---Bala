@@ -119,3 +119,242 @@ new BirdAdapter(new Bird()).walk(); // with the bird adaptor i am able to make w
 
 
 # Bridge : Seperates the abstraction from its implementaion, so that the two can vary independently
+
+class Shape{
+  constructor(){}
+  draw(){}
+  
+}
+
+class Rectangle extends Shape{
+  constructor(color){
+    super();
+    this.color = color;
+  }
+  draw(){
+    console.log('I am a rectangle with color '+this.color.getName());
+  }
+}
+
+class Circle extends Shape{
+  constructor(color){
+    super();
+    this.color = color;
+  }
+  draw(){
+    console.log('I am a rectangle with'+this.color.getName());
+  }
+}
+
+
+class Color{
+  constructor(){
+    this.color = ""
+  }
+}
+class RedColor extends Color{
+  constructor(){super(); this.color = 'Red';}
+  getName(){ return this.color;}
+}
+class BlueColor extends Color{
+  constructor(){super(); this.color = 'Blue';}
+  getName(){ return this.color;}
+}
+
+
+new Rectangle(new RedColor()).draw()
+new Rectangle(new BlueColor()).draw()
+
+
+# Decorator : Adding new functionality to the existing object, without altering its strcture
+
+class Pizza{
+  constructor(){}
+  getCost(){ return 0; }
+  getDescription(){return "Pizza";}
+}
+
+class Decorator extends Pizza{
+  constructor(){super()}
+  getDescription(){return "Pizza";}
+}
+
+class Paneer extends Decorator{
+  constructor(pizza){
+    super()
+    this.pizza = pizza;
+  }
+  
+  getDescription(){return "Paneer "+ this.pizza.getDescription();}
+  getCost(){ return 10+this.pizza.getCost();}
+}
+
+class Chicken extends Decorator{
+  constructor(pizza){
+    super()
+    this.pizza = pizza;
+  }
+  
+  getDescription(){return "Chicken "+ this.pizza.getDescription();}
+  getCost(){ return 50+this.pizza.getCost();}
+}
+
+
+new Chicken(new Paneer(new Pizza())).getDescription()
+
+# Composite : Compose objects in to tree strcture to represent part-whoe hierachies
+Example: directory contains directories or files, file is a leaf node, directory is a composite
+Every node will have add/remove/getChild functions
+
+class Node{
+  constructor(name){
+    this.children = [];
+    this.name = name;
+  }
+  
+  add(child){
+      this.children.push(child)
+  }
+  remove(child){
+    var length = this.children.length;
+    for (var i = 0; i < length; i++) {
+      if (this.children[i] === child) {
+        this.children.splice(i, 1);
+        return;
+      }
+    }
+  }
+  getChild(ind){
+    return this.children[ind]
+  } 
+}
+
+
+# Facede : Noting but face of a building, means provides simple interface to client instead of complex sub system. It hides complexity, not reduce complexity.
+
+class HotelKeeperFacede{
+  getVegMenu(){
+    new VegHotel().getMenu();
+  }
+  getNonVegMenu(){
+    new NonVegHotel().getMenu();
+  }
+}
+
+class Hotel{
+  getMenu(){
+    
+  }
+}
+
+class VegHotel extends Hotel{
+  getMenu(){
+    console.log("Veg Menu...")
+  }
+}
+
+class NonVegHotel extends Hotel{
+  getMenu(){
+    console.log("NonVeg Menu...")
+  }
+}
+
+
+new HotelKeeper().getVegMenu()
+
+
+
+# Observer : Pub/Sub pattern, it is for one-to-many relationship b/w objects. If one object is modified, all the dependent objects get notified automatically. 
+Advantage: Loose coupling
+
+publisher => add/remove/notify
+observer => update
+
+
+class Observer {
+  constructor(name){this.name = name}
+  update(m){ console.log(m+" "+this.name) }
+}
+
+class Publisher{
+  constructor(){
+    this.observeres = []
+  }
+  add(observer){
+    this.observeres.push(observer)
+  }
+  remove(observer){
+    this.observeres.remove(observer)
+  }
+  notify(text){
+    for (let observer of this.observeres)
+				observer.update(text);
+  }
+}
+
+let observer1 = new Observer("observer1");
+let observer2 = new Observer("observer2");
+let observer3 = new Observer("observer3");
+
+let publisher = new Publisher();
+publisher.add(observer1);
+publisher.add(observer2);
+publisher.add(observer3);
+
+publisher.notify("Hey...texting to you observer...")
+
+
+# Strategy : class behaviour or it's algorithm can be changed at runtime
+Example: java.util.comparator, has compare() to order the elements
+Advantages: Based on Open/Close principle. Allow clinet to choose any algorithms from set of defined related algorithms.
+
+
+class SocialMedia{
+  constructor(strategy){this.strategy = strategy}
+  login(){this.strategy.login()}
+}
+
+class Google{
+  login(){ console.log('i am google')}
+}
+
+class Facebook{
+  login(){ console.log('i am facebook')}
+}
+
+new SocialMedia(new Google()).login()
+new SocialMedia(new Facebook()).login()
+
+
+# Template Method :  Defining the skeleton of an algorithm, which shall not be overriden
+
+class House {
+  buildHouse() {
+    constructBase();
+		constructRoof();
+		constructWalls();
+		decorateHouse();
+  }
+  constructRoof() {
+	  console.log("Roof has been constructed.");
+	}
+  constructBase() {
+	  console.log("Base has been constructed.");
+	}
+  constructWalls(){}
+  decorateHouse(){}
+}
+
+class MyHouse extends House {
+  constructor(){super()}
+  buildHouse() {
+    this.constructBase();
+		this.constructRoof();
+		this.constructWalls();
+		this.decorateHouse();
+  }
+  constructWalls(){ console.log("MyHouse...constructWalls")}
+  decorateHouse(){ console.log("MyHouse...decorateHouse")}
+}
+
+new MyHouse().buildHouse()
